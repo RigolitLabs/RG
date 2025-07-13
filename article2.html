@@ -1,0 +1,724 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MAX: мессенджер или инструмент для слежки? - R͚̞I̘̺G̠͍O͎̠L̘͔I͔̝T͍͕</title>
+    <link rel="icon" href="logo.jpg" type="image/jpeg">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <div class="brand-info">
+                <a href="index.html"><img src="logo.jpg" alt="R͚̞I̘̺G̠͍O͎̠L̘͔I͔̝T͍͕ Logo" class="logo"></a>
+                <a href="index.html"><h1>R͚̞I̘̺G̠͍O͎̠L̘͔I͔̝T͍͕</h1></a>
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="index.html">Главная</a></li>
+                    <li><a href="articles.html">Статьи и Работы</a></li>
+                    <li><a href="about.html">О Канале</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <section class="article-content">
+            <div class="container">
+                <h1>Общий отчёт по анализу приложения "Макс"</h1>
+                <p class="article-meta">Опубликовано: 12.07.2025</p>
+                
+                <h2>1. Общая информация о приложении "Макс"</h2>
+                <p>Приложение "Макс" позиционируется как быстрый и лёгкий мессенджер для общения. Заявлены функции высокого качества звонков, анимированные стикеры, отправка файлов до 4 ГБ, а также наличие чат-ботов и мини-приложений. Распространяется на различных платформах: Android (через Google Play, RuStore, AppGallery), iOS (через App Store) и десктопные версии. Заявленный пакет приложения - <code>ru.oneme.app</code> (согласно AndroidManifest.xml).</p>
+
+                <h2>2. Обфускация кода</h2>
+                <p>Значительная часть кода приложения, особенно в модуле <code>com.my.tracker.obfuscated</code>, подвергнута обфускации. Имена классов (<code>e0</code>, <code>c1</code>, <code>y2</code>, <code>b3</code>, <code>f1</code> и т.д.), методов (<code>a()</code>, <code>b()</code>, <code>c()</code>) и переменных в этих обфусцированных файлах являются бессмысленными и короткими, что делает анализ логики работы приложения крайне затруднительным без деобфускации. Обфускация часто используется для затруднения обратной разработки и скрытия истинных функций кода.</p>
+
+                <h2>3. Собираемые данные (модуль MyTracker)</h2>
+                <p>Модуль <code>com.my.tracker</code> (судя по <code>MyTracker.java</code>, <code>MyTrackerConfig.java</code>, <code>MyTrackerParams.java</code>) отвечает за обширный сбор пользовательских данных и событий.</p>
+                
+                <h3>Основные категории собираемых данных:</h3>
+                <ul>
+                    <li><strong>Пользовательские события</strong>:
+                    <ul>
+                        <li>Рекламные события (<code>trackAdEvent</code>): Информация о взаимодействии с рекламой.</li>
+                        <li>События покупок (<code>trackAppGalleryPurchaseEvent</code>, <code>trackPurchaseEvent</code>): Детали о приобретениях, включая ID продукта, цены, валюты, и дополнительные параметры.</li>
+                        <li>Общие пользовательские события (<code>trackEvent</code>): Универсальный сбор произвольных событий с настраиваемыми параметрами (например, название события, категория, значение).</li>
+                        <li>События приглашений (<code>trackInviteEvent</code>): Отслеживание приглашений пользователей.</li>
+                        <li>Запуски приложений (<code>trackLaunchManually</code>): Фиксация каждого ручного запуска приложения.</li>
+                        <li>События уровней (<code>trackLevelEvent</code>): Прогресс пользователя по уровням.</li>
+                        <li>События входа (<code>trackLoginEvent</code>): Информация о входах пользователя, включая ID и метод входа.</li>
+                        <li>События мини-приложений (<code>trackMiniAppEvent</code>): Активность пользователя в мини-приложениях.</li>
+                        <li>События регистрации (<code>trackRegistrationEvent</code>): Детали о процессе регистрации пользователя.</li>
+                        <li>Время, проведенное в приложении/на событии (<code>incrementEventTimeSpent</code>, <code>startAnytimeTimeSpent</code>, <code>stopAnytimeTimeSpent</code>, <code>startForegroundTimeSpent</code>, <code>stopForegroundTimeSpent</code>): Детальная статистика использования приложения.</li>
+                    </ul>
+                    </li>
+                    <li><strong>Персональные данные пользователя</strong>:
+                    <ul>
+                        <li>Возраст (<code>getAge</code>, <code>setAge</code>).</li>
+                        <li>Пол (<code>getGender</code>, <code>setGender</code>).</li>
+                        <li>Пользовательские ID (<code>getCustomUserId</code>/<code>getCustomUserIds</code>, <code>setCustomUserId</code>/<code>setCustomUserIds</code>).</li>
+                        <li>Адреса электронной почты (<code>getEmail</code>/<code>getEmails</code>, <code>setEmail</code>/<code>setEmails</code>).</li>
+                        <li>ID из мессенджеров и соцсетей: ICQ ID (<code>getIcqId</code>), OK.ru ID (<code>getOkId</code>), VK Connect ID (<code>getVkConnectId</code>), VK ID (<code>getVkId</code>).</li>
+                        <li>Номера телефонов (<code>getPhone</code>/<code>getPhones</code>, <code>setPhone</code>/<code>setPhones</code>).</li>
+                        <li>Язык интерфейса (<code>getLang</code>, <code>setLang</code>).</li>
+                        <li>Специальные ID, связанные с MRGS (<code>getMrgsAppId</code>, <code>getMrgsId</code>, <code>getMrgsUserId</code>).</li>
+                        <li>Произвольные кастомные параметры (<code>getCustomParam</code>, <code>setCustomParam</code>): Позволяют разработчикам собирать любую дополнительную информацию.</li>
+                    </ul>
+                    </li>
+                    <li><strong>Данные атрибуции</strong>:
+                    <ul>
+                        <li>Диплинки (<code>getDeeplink</code> из MyTrackerAttribution): Источники перехода пользователя в приложение (например, из рекламных кампаний или внешних ссылок).</li>
+                    </ul>
+                    </li>
+                </ul>
+
+                <h2>4. Данные системы и действия с ней (AndroidManifest.xml)</h2>
+                <p>Файл <code>AndroidManifest.xml</code> описывает запрошенные разрешения и компоненты, которые позволяют приложению взаимодействовать с операционной системой и собирать системные данные.</p>
+
+                <h3>Основные запрашиваемые разрешения:</h3>
+                <ul>
+                    <li><strong>Доступ к сети и местоположению</strong>:
+                    <ul>
+                        <li><code>android.permission.INTERNET</code>: Полный доступ к сети.</li>
+                        <li><code>android.permission.ACCESS_WIFI_STATE</code>, <code>android.permission.ACCESS_NETWORK_STATE</code>, <code>android.permission.CHANGE_NETWORK_STATE</code>, <code>android.permission.CHANGE_WIFI_STATE</code>: Доступ к состоянию Wi-Fi и сотовой сети, возможность изменять их состояние.</li>
+                        <li><code>android.permission.ACCESS_FINE_LOCATION</code>, <code>android.permission.ACCESS_COARSE_LOCATION</code>: Получение точного и приблизительного местоположения пользователя (GPS, Wi-Fi, сотовые сети).</li>
+                    </ul>
+                    </li>
+                    <li><strong>Доступ к данным пользователя</strong>:
+                    <ul>
+                        <li><code>android.permission.READ_CONTACTS</code>, <code>android.permission.WRITE_CONTACTS</code>: Чтение и изменение списка контактов.</li>
+                        <li><code>android.permission.GET_ACCOUNTS</code>, <code>android.permission.AUTHENTICATE_ACCOUNTS</code>, <code>android.permission.MANAGE_ACCOUNTS</code>, <code>android.permission.USE_CREDENTIALS</code>: Доступ к учетным записям на устройстве, управление ими и использование учетных данных.</li>
+                        <li><code>android.permission.READ_PHONE_NUMBERS</code>: Чтение телефонных номеров с устройства.</li>
+                        <li><code>android.permission.READ_EXTERNAL_STORAGE</code>, <code>android.permission.WRITE_EXTERNAL_STORAGE</code> (до SDK 28/32): Чтение и запись файлов на внешнем накопителе.</li>
+                        <li><code>android.permission.READ_MEDIA_IMAGES</code>, <code>android.permission.READ_MEDIA_VIDEO</code>, <code>android.permission.READ_MEDIA_VISUAL_USER_SELECTED</code>: Доступ к изображениям и видео.</li>
+                    </ul>
+                    </li>
+                    <li><strong>Доступ к аппаратным возможностям</strong>:
+                    <ul>
+                        <li><code>android.permission.CAMERA</code>: Доступ к камере.</li>
+                        <li><code>android.permission.RECORD_AUDIO</code>: Доступ к микрофону для записи звука.</li>
+                        <li><code>android.permission.BLUETOOTH</code>, <code>android.permission.BLUETOOTH_ADMIN</code>, <code>android.permission.BLUETOOTH_CONNECT</code>: Полный контроль над Bluetooth-соединениями.</li>
+                        <li><code>android.permission.USE_BIOMETRIC</code>, <code>android.permission.USE_FINGERPRINT</code>: Использование биометрических данных (отпечатков пальцев).</li>
+                    </ul>
+                    </li>
+                    <li><strong>Управление системой и уведомлениями</strong>:
+                    <ul>
+                        <li><code>android.permission.POST_NOTIFICATIONS</code>: Отправка уведомлений.</li>
+                        <li><code>android.permission.SYSTEM_ALERT_WINDOW</code>: Отображение контента поверх других окон.</li>
+                        <li><code>android.permission.RECEIVE_BOOT_COMPLETED</code>: Автозапуск при включении устройства.</li>
+                        <li><code>android.permission.WAKE_LOCK</code>: Предотвращение перехода устройства в спящий режим.</li>
+                        <li><code>android.permission.DISABLE_KEYGUARD</code>: Отключение блокировки экрана.</li>
+                        <li><code>android.permission.MODIFY_AUDIO_SETTINGS</code>: Изменение настроек звука.</li>
+                        <li><code>android.permission.REQUEST_INSTALL_PACKAGES</code>: Запрос на установку других приложений.</li>
+                        <li><code>android.permission.DOWNLOAD_WITHOUT_NOTIFICATION</code>: Загрузка файлов без уведомлений.</li>
+                        <li>Разрешения для работы со значками уведомлений на различных лаунчерах (Samsung, Sony, Huawei, Oppo, HTC и другие).</li>
+                    </ul>
+                    </li>
+                    <li><strong>Интеграция с сервисами Google</strong>:
+                    <ul>
+                        <li><code>com.google.android.gms.permission.AD_ID</code>: Доступ к рекламному идентификатору Google.</li>
+                        <li><code>com.android.vending.BILLING</code>: Работа с платежной системой Google Play.</li>
+                        <li><code>com.google.android.c2dm.permission.RECEIVE</code>: Получение push-уведомлений.</li>
+                        <li><code>com.google.android.finsky.permission.BIND_GET_INSTALL_REFERRER_SERVICE</code>: Получение данных о реферере установки.</li>
+                    </ul>
+                    </li>
+                </ul>
+
+                <h3>Основные компоненты и их функции:</h3>
+                <ul>
+                    <li><strong>Activity</strong>:
+                    <ul>
+                        <li><code>MainActivity</code>: Основной экран, может принимать интенты для обмена данными (<code>android.intent.action.SEND</code>).</li>
+                        <li><code>LinkInterceptorActivity</code>: Перехватывает HTTP/HTTPS и кастомные схемы (<code>max</code>) для обработки диплинков, потенциально контролируя веб-трафик.</li>
+                        <li><code>CallNotifierFixActivity</code>: Отображает информацию о звонках на экране блокировки.</li>
+                    </ul>
+                    </li>
+                    <li><strong>Service</strong>:
+                    <ul>
+                        <li><code>ContactsSyncService</code>: Служба синхронизации контактов.</li>
+                        <li><code>NotificationTamService</code>, <code>FcmMessagingService</code>, <code>FirebaseMessagingService</code>: Службы для обработки push-уведомлений.</li>
+                        <li><code>OneMeMediaSessionService</code>, <code>OneMeDownloadService</code>, <code>MediaProjectionService</code>: Службы для работы с медиа-контентом, загрузками и захватом экрана.</li>
+                        <li><code>UploadService</code>: Служба для загрузки аналитических данных.</li>
+                        <li><code>CallServiceImpl</code>: Служба, связанная с функциями звонков.</li>
+                        <li><code>androidx.work.impl.foreground.SystemForegroundService</code>: Использует службы переднего плана для <code>microphone|camera|location|mediaPlayback|dataSync</code>, что означает, что эти функции могут работать в фоне с уведомлением.</li>
+                    </ul>
+                    </li>
+                    <li><strong>Receiver</strong>:
+                    <ul>
+                        <li><code>BootCompletedReceiver</code>: Запускает приложение при загрузке системы.</li>
+                        <li><code>TimeChangeReceiver</code>: Реагирует на изменение системного времени.</li>
+                        <li><code>CallsMediaButtonReceiver</code>: Обрабатывает нажатия на медиа-кнопки (например, на гарнитуре).</li>
+                    </ul>
+                    </li>
+                    <li><strong>Provider</strong>:
+                    <ul>
+                        <li><code>FileProvider</code>, <code>NotificationsImagesProvider</code>: Предоставляют контролируемый доступ к файлам.</li>
+                    </ul>
+                    </li>
+                </ul>
+
+                <h3>Используемые аппаратные особенности (<code>uses-feature</code>):</h3>
+                <p>Приложение может использовать: сенсорный экран, функции телефонии, геолокацию (GPS и сетевую), акселерометр, камеру (с автофокусом), датчики света, компаса, гироскопа, барометра, приближения, а также Bluetooth.</p>
+
+                <h2>Детальный отчёт по анализу приложения "Макс"</h2>
+
+                <h3>1. Обфускация кода</h3>
+                <p>Значительная часть исходного кода, особенно в пакете <code>com.my.tracker.obfuscated</code>, подвергнута сильной обфускации. Это затрудняет прямой анализ функциональности, поскольку имена классов, методов и переменных заменены на короткие, бессмысленные идентификаторы (например, <code>e0</code>, <code>c1</code>, <code>y2</code>, <code>a()</code>, <code>b()</code>). Целью обфускации является предотвращение обратной разработки и скрытие внутренней логики.</p>
+
+                <h3>Пример обфусцированных имён классов и методов из <code>e0.java</code>:</h3>
+                <pre><code>
+package com.my.tracker.obfuscated;
+
+import android.content.Context;
+import android.text.TextUtils;
+import com.my.tracker.MyTrackerConfig;
+import com.my.tracker.ads.AdEvent;
+import com.my.tracker.miniapps.MiniAppEvent;
+import com.my.tracker.obfuscated.e0;
+import com.my.tracker.obfuscated.o1;
+import com.my.tracker.obfuscated.s0;
+import com.my.tracker.obfuscated.y2;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import org.json.JSONObject;
+
+/* loaded from: classes.dex */
+public final class e0 {
+    public static final DecimalFormat l;
+    final y2 b;
+    final Context c;
+    final b d;
+    f1 h;
+    final Map a = new HashMap();
+                </code></pre>
+
+                <h3>3. Анализ собираемых данных и функций (Модуль <code>MyTracker</code>)</h3>
+                <p>Модуль <code>com.my.tracker</code> отвечает за обширный сбор телеметрии, пользовательских событий и персональных данных.</p>
+
+                <h3>3.1. <code>MyTracker.java</code> - Основной интерфейс трекера</h3>
+                <p>Этот файл содержит статические методы для инициализации трекера и отправки различных событий. Все вызовы событий делегируются обфусцированному классу <code>c1</code>, что подтверждает его центральную роль в отправке данных.</p>
+                <ul>
+                    <li><strong>Инициализация трекера:</strong> Приложение инициализирует трекер с заданным ID и контекстом приложения.
+                    <pre><code>
+public static void initTracker(String str, Application application) {
+    if (TextUtils.isEmpty(str)) {
+        x2.b("MyTracker initialization failed: id can't be empty");
+    } else if (b != null) {
+        x2.c("MyTracker has already been initialized");
+    } else {
+        synchronized (MyTracker.class) {
+            try {
+                if (b != null) {
+                    x2.c("MyTracker has already been initialized");
+                    return;
+                }
+                y2 y2Var = a.a;
+                ArrayList arrayList = new ArrayList(a);
+                c1 a2 = c1.a(str, y2Var, application);
+                a2.a(arrayList);
+                b = a2;
+            } catch (Throwable th) {
+                throw th;
+            }
+        }
+    }
+}
+                    </code></pre>
+                    <p>Здесь <code>str</code> — это ID трекера. Класс <code>c1</code> создаётся и инициализируется.</p>
+                    </li>
+                    <li><strong>Отслеживание общих событий:</strong> Позволяет отправлять произвольные события с пользовательскими параметрами.
+                    <pre><code>
+public static void trackEvent(String str, Map<String, String> map) {
+    c1 c1Var = b;
+    if (c1Var == null) {
+        x2.b("MyTracker hasn't been initialized yet. You should call MyTracker.initTracker() method first");
+    } else {
+        c1Var.a(str, map);
+    }
+}
+                    </code></pre>
+                    <p>Здесь <code>str</code> - название события, <code>map</code> - произвольные параметры. <code>c1Var.a(str, map)</code> указывает на то, что эти данные передаются в обфусцированный класс <code>c1</code> для обработки и отправки.</p>
+                    </li>
+                    <li><strong>Отслеживание рекламных событий:</strong>
+                    <pre><code>
+public static void trackAdEvent(AdEvent adEvent) {
+    c1 c1Var = b;
+    if (c1Var == null) {
+        x2.b("MyTracker hasn't been initialized yet. You should call MyTracker.initTracker() method first");
+    } else {
+        c1Var.a(adEvent);
+    }
+}
+                    </code></pre>
+                    <p>Объект <code>AdEvent</code> содержит информацию о рекламном событии.</p>
+                    </li>
+                    <li><strong>Отслеживание покупок:</strong>
+                    <pre><code>
+public static void trackAppGalleryPurchaseEvent(Object obj, String str, String str2, String str3, Map<String, String> map) {
+    c1 c1Var = b;
+    if (c1Var == null) {
+        x2.b("MyTracker hasn't been initialized yet. You should call MyTracker.initTracker() method first");
+    } else {
+        c1Var.a(obj, str, str2, str3, map);
+    }
+}
+                    </code></pre>
+                    <p>Аналогичные методы для Google Play покупок также присутствуют, что означает детальный сбор финансовой активности пользователя.</p>
+                    </li>
+                    <li><strong>Отслеживание времени, проведенного в приложении:</strong>
+                    <pre><code>
+public static void startAnytimeTimeSpent(int i) {
+    a(i, true);
+}
+                    </code></pre>
+                    <p>Эти методы собирают информацию о том, сколько пользователь проводит времени в приложении, с разными режимами (<code>Anytime</code>, <code>Foreground</code>).</p>
+                    </li>
+                </ul>
+
+                <h3>3.2. <code>MyTrackerConfig.java</code> - Конфигурация сбора данных</h3>
+                <p>Этот файл управляет параметрами, которые определяют, какая именно информация собирается.</p>
+                <ul>
+                    <li><strong>Режим отслеживания местоположения:</strong>
+                    <pre><code>
+public int getLocationTrackingMode() {
+    return this.a.j();
+}
+                    </code></pre>
+                    <p>Значения <code>ACTIVE</code> (2), <code>CACHED</code> (1), <code>NONE</code> (0) показывают, что приложение может активно собирать или использовать кэшированные данные о местоположении, если это разрешено.</p>
+                    </li>
+                    <li><strong>Список установленных приложений:</strong>
+                    <pre><code>
+public interface InstalledPackagesProvider {
+    List&lt;PackageInfo&gt; getInstalledPackages();
+}
+                    </code></pre>
+                    <p>Через метод <code>setInstalledPackagesProvider()</code> приложение может получить доступ к списку всех установленных на устройстве пакетов, что является значительным нарушением конфиденциальности.</p>
+                    </li>
+                    <li><strong>Отслеживание окружения и предустановок:</strong>
+                    <pre><code>
+public boolean isTrackingEnvironmentEnabled() {
+    return this.a.u();
+}
+
+public boolean isTrackingLaunchEnabled() {
+    return this.a.v();
+}
+// ...
+public boolean isTrackingPreinstallEnabled() {
+    return this.a.w();
+}
+
+public boolean isTrackingPreinstallThirdPartyEnabled() {
+    return this.a.x();
+}
+                    </code></pre>
+                    <p>Эти флаги контролируют сбор данных о системном окружении (модель устройства, ОС), о запусках приложения и о его предустановке (включая предустановку от сторонних партнёров), что позволяет отслеживать источник установки.</p>
+                    </li>
+                </ul>
+
+                <h3>3.3. <code>MyTrackerParams.java</code> - Персональные данные пользователя</h3>
+                <p>Этот файл содержит методы для установки и получения различных персональных данных пользователя, которые затем могут быть отправлены на серверы трекера.</p>
+                <ul>
+                    <li><strong>Сбор персональных данных:</strong>
+                    <pre><code>
+public int getAge() {
+    return this.c.a;
+}
+// ...
+public String getCustomUserId() {
+    return b(this.c.g);
+}
+// ...
+public String getEmail() {
+    return b(this.c.e);
+}
+// ...
+public int getGender() {
+    return this.c.b;
+}
+// ...
+public String getIcqId() {
+    return b(this.c.f);
+}
+// ...
+public String getOkId() {
+    return b(this.c.c);
+}
+// ...
+public String getPhone() {
+    return b(this.c.h);
+}
+// ...
+public String getVkConnectId() {
+    return b(this.c.i);
+}
+// ...
+public String getVkId() {
+    return b(this.c.d);
+}
+                    </code></pre>
+                    <p>Как видно, приложение собирает возраст, пол, различные ID пользователя (кастомные, ICQ, OK.ru, VK, VK Connect), адрес электронной почты и номер телефона. Методы <code>set*</code> позволяют приложению записывать эти данные.</p>
+                    </li>
+                    <li><strong>Кастомные параметры:</strong>
+                    <pre><code>
+public MyTrackerParams setCustomParam(String str, String str2) {
+    String lowerCase = str.toLowerCase(Locale.ROOT);
+    if (str2 == null) {
+        this.d.remove(lowerCase);
+    } else {
+        this.d.put(lowerCase, str2);
+    }
+    return this;
+}
+                    </code></pre>
+                    <p>Это позволяет приложению собирать <em>любые</em> дополнительные пары ключ-значение, что открывает широкие возможности для сбора произвольных данных.</p>
+                    </li>
+                </ul>
+
+                <h3>4. Данные системы и действия с ней (AndroidManifest.xml)</h3>
+                <p>Манифест приложения показывает, какие разрешения оно запрашивает и какие компоненты использует для взаимодействия с операционной системой и доступом к данным устройства.</p>
+
+                <ul>
+                    <li><strong>Ключевые разрешения (только часть, список огромный):</strong>
+                    <pre><code>
+&lt;uses-permission android:name="android.permission.POST_NOTIFICATIONS"/&gt;
+&lt;uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES"/&gt;
+&lt;uses-permission android:name="com.sec.android.provider.badge.permission.READ"/&gt;
+&lt;uses-permission android:name="com.sec.android.provider.badge.permission.WRITE"/&gt;
+&lt;uses-permission android:name="com.sonyericsson.home.permission.BROADCAST_BADGE"/&gt;
+&lt;uses-permission android:name="com.sonymobile.home.permission.PROVIDER_INSERT_BADGE"/&gt;
+&lt;uses-permission android:name="com.anddoes.launcher.permission.UPDATE_COUNT"/&gt;
+&lt;uses-permission android:name="com.majeur.launcher.permission.UPDATE_BADGE"/&gt;
+&lt;uses-permission android:name="com.huawei.android.launcher.permission.CHANGE_BADGE"/&gt;
+&lt;uses-permission android:name="com.huawei.android.launcher.permission.READ_SETTINGS"/&gt;
+&lt;uses-permission android:name="com.huawei.android.launcher.permission.WRITE_SETTINGS"/&gt;
+&lt;uses-permission android:name="android.permission.READ_APP_BADGE"/&gt;
+&lt;uses-permission android:name="com.oppo.launcher.permission.READ_SETTINGS"/&gt;
+&lt;uses-permission android:name="com.oppo.launcher.permission.WRITE_SETTINGS"/&gt;
+&lt;uses-permission android:name="me.everything.badger.permission.BADGE_COUNT_READ"/&gt;
+&lt;uses-permission android:name="me.everything.badger.permission.BADGE_COUNT_WRITE"/&gt;
+&lt;uses-permission android:name="android.permission.VIBRATE"/&gt;
+                    </code></pre>
+                    <p>Здесь видно разрешения на управление уведомлениями, запросы на установку пакетов, что является потенциальной угрозой.</p>
+                    <pre><code>
+&lt;uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW"/&gt;
+&lt;uses-permission android:name="android.permission.INTERNET"/&gt;
+&lt;uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/&gt;
+&lt;uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/&gt;
+&lt;uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/&gt;
+&lt;uses-permission android:name="android.permission.BLUETOOTH" android:maxSdkVersion="30"/&gt;
+&lt;uses-permission android:name="android.permission.BLUETOOTH_ADMIN"/&gt;
+&lt;uses-permission android:name="android.permission.BLUETOOTH_CONNECT"/&gt;
+&lt;uses-permission android:name="android.permission.CHANGE_WIFI_STATE"/&gt;
+&lt;uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/&gt;
+&lt;uses-permission android:name="android.permission.READ_CONTACTS"/&gt;
+&lt;uses-permission android:name="android.permission.WRITE_CONTACTS"/&gt;
+&lt;uses-permission android:name="android.permission.CAMERA"/&gt;
+&lt;uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" android:maxSdkVersion="32"/&gt;
+&lt;uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" android:maxSdkVersion="28"/&gt;
+&lt;uses-permission android:name="android.permission.READ_MEDIA_IMAGES"/&gt;
+&lt;uses-permission android:name="android.permission.READ_MEDIA_VIDEO"/&gt;
+&lt;uses-permission android:name="android.permission.GET_ACCOUNTS"/&gt;
+&lt;uses-permission android:name="android.permission.AUTHENTICATE_ACCOUNTS"/&gt;
+&lt;uses-permission android:name="android.permission.MANAGE_ACCOUNTS"/&gt;
+&lt;uses-permission android:name="android.permission.USE_CREDENTIALS"/&gt;
+&lt;uses-permission android:name="android.permission.RECORD_AUDIO"/&gt;
+&lt;uses-permission android:name="android.permission.WAKE_LOCK"/&gt;
+&lt;uses-permission android:name="android.permission.DISABLE_KEYGUARD"/&gt;
+&lt;uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS"/&gt;
+&lt;uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/&gt;
+&lt;uses-permission android:name="android.permission.FOREGROUND_SERVICE"/&gt;
+&lt;uses-permission android:name="android.permission.USE_BIOMETRIC"/&gt;
+&lt;uses-permission android:name="android.permission.USE_FULL_SCREEN_INTENT"/&gt;
+&lt;uses-permission android:name="android.permission.READ_PHONE_NUMBERS"/&gt;
+                    </code></pre>
+                    <p>Этот блок разрешений показывает способность приложения к глубокому взаимодействию с системой: чтение и изменение контактов, доступ к камере и микрофону, чтение телефонных номеров, управление учетными записями, доступ к файлам, местоположению и многое другое. Наличие <code>SYSTEM_ALERT_WINDOW</code> позволяет отображать контент поверх других приложений.</p>
+                    </li>
+                    <li><strong>Компоненты (Activities, Services, Receivers):</strong>
+                    <pre><code>
+&lt;activity android:theme="@style/OneMe.Theme.Light" android:label="@string/oneme_app_name" android:icon="@mipmap/ic_launcher" android:name="one.me.android.MainActivity" android:exported="true" android:taskAffinity="one.me.application" android:launchMode="singleTask" android:screenOrientation="portrait" android:configChanges="smallestScreenSize|screenSize|uiMode|screenLayout|locale" android:hardwareAccelerated="true" android:resizeableActivity="true" android:supportsPictureInPicture="true"&gt;
+    &lt;intent-filter&gt;
+        &lt;action android:name="android.intent.action.MAIN"/&gt;
+        &lt;category android:name="android.intent.category.LAUNCHER"/&gt;
+    &lt;/intent-filter&gt;
+    &lt;intent-filter&gt;
+        &lt;action android:name="android.intent.action.SEND"/&gt;
+        &lt;category android:name="android.intent.category.DEFAULT"/&gt;
+        &lt;data android:mimeType="*/*"/&gt;
+    &lt;/intent-filter&gt;
+    &lt;intent-filter&gt;
+        &lt;action android:name="android.intent.action.SEND_MULTIPLE"/&gt;
+        &lt;category android:name="android.intent.category.DEFAULT"/&gt;
+        &lt;data android:mimeType="*/*"/&gt;
+    &lt;/intent-filter&gt;
+    &lt;meta-data android:name="android.app.shortcuts" android:resource="@xml/shortcuts"/&gt;
+&lt;/activity&gt;
+                    </code></pre>
+                    <p>Главная активность, способная обрабатывать интенты отправки данных.</p>
+                    <pre><code>
+&lt;activity android:theme="@style/OneMe.Theme.Transparent" android:label="" android:name="one.me.android.deeplink.LinkInterceptorActivity" android:exported="true" android:excludeFromRecents="true" android:launchMode="singleTop" android:configChanges="orientation" android:windowSoftInputMode="adjustResize|stateHidden"&gt;
+    &lt;intent-filter android:label="max" android:autoVerify="true"&gt;
+        &lt;action android:name="android.intent.action.VIEW"/&gt;
+        &lt;category android:name="android.intent.category.DEFAULT"/&gt;
+        &lt;category android:name="android.intent.category.BROWSABLE"/&gt;
+        &lt;data android:pathPattern="/..*"/&gt;
+        &lt;data android:scheme="http"/&gt;
+        &lt;data android:scheme="@string/web_scheme"/&gt;
+        &lt;data android:host="@string/app_host"/&gt;
+    &lt;/intent-filter&gt;
+    &lt;intent-filter&gt;
+        &lt;action android:name="android.intent.action.VIEW"/&gt;
+        &lt;category android:name="android.intent.category.DEFAULT"/&gt;
+        &lt;category android:name="android.intent.category.BROWSABLE"/&gt;
+        &lt;data android:scheme="@string/app_scheme"/&gt;
+        &lt;data android:host="@string/app_host"/&gt;
+    &lt;/intent-filter&gt;
+    &lt;meta-data android:name="android.app.shortcuts" android:resource="@xml/shortcuts"/&gt;
+&lt;/activity&gt;
+                    </code></pre>
+                    <p>Перехватчик диплинков, позволяющий приложению контролировать открытие URL-адресов, связанных с ним, а не передавать их внешнему браузеру. Это позволяет отслеживать переходы и, возможно, собирать данные о посещенных страницах.</p>
+                    <pre><code>
+&lt;service android:name="androidx.work.impl.foreground.SystemForegroundService" android:enabled="@bool/enable_system_foreground_service_default" android:exported="false" android:directBootAware="false" android:foregroundServiceType="microphone|camera|location|mediaPlayback|dataSync"/&gt;
+                    </code></pre>
+                    <p>Эта служба переднего плана позволяет приложению использовать микрофон, камеру, геолокацию, воспроизведение медиа и синхронизацию данных в фоновом режиме, отображая при этом только минимальное уведомление. Это очень опасно, так как позволяет приложению <em>постоянно</em> собирать данные и выполнять действия, пока оно активно.</p>
+                    <pre><code>
+&lt;service android:name="one.me.calls.impl.service.CallServiceImpl" android:exported="false" android:foregroundServiceType="microphone|camera|mediaProjection|mediaPlayback"/&gt;
+                    </code></pre>
+                    <p>Служба, связанная со звонками, также может использовать микрофон, камеру, захват экрана (<code>mediaProjection</code>) и воспроизведение медиа в фоновом режиме. Это может позволить записывать разговоры или происходящее на экране.</p>
+                    <pre><code>
+&lt;service android:name="ru.ok.messages.contacts.sync.ContactsSyncService" android:exported="true"&gt;
+    &lt;intent-filter&gt;
+        &lt;action android:name="android.content.SyncAdapter"/&gt;
+    &lt;/intent-filter&gt;
+    &lt;meta-data android:name="android.content.SyncAdapter" android:resource="@xml/syncadapter"/&gt;
+    &lt;meta-data android:name="android.provider.CONTACTS_STRUCTURE" android:resource="@xml/contacts"/&gt;
+&lt;/service&gt;
+                    </code></pre>
+                    <p>Явное указание на службу синхронизации контактов, подтверждающее, что контакты могут быть синхронизированы с внешним сервером.</p>
+                    </li>
+                </ul>
+
+                <h3>5. Попытка анализа обфусцированного кода (на примере <code>e0.java</code> и <code>f1.java</code>)</h3>
+                <p>Полный анализ обфусцированного кода без деобфускации практически невозможен. Однако, по структуре и косвенным признакам можно сделать некоторые предположения.</p>
+
+                <h3>5.1. <code>e0.java</code> - Основной контроллер трекера</h3>
+                <p>Как уже было показано, <code>e0</code> содержит методы <code>a()</code>, <code>b()</code>, <code>c()</code> и другие, которые вызываются из <code>MyTracker.java</code>. Этот класс, судя по всему, является центральным для управления событиями, их буферизации и отправки.</p>
+                <ul>
+                    <li><strong>Буферизация и отправка пакетов:</strong>
+                    <pre><code>
+public void b(boolean z, b3 b3Var, String str, f1 f1Var) {
+    x2.a("createAndStorePartialPacket: start");
+    y2.a o = this.b.o();
+    String h = this.b.h();
+    MyTrackerConfig.OkHttpClientProvider n = this.b.n();
+    this.i.a();
+    int a2 = a(this.i, f1Var, o, z, b3Var, str, this.j, h, n, this.c);
+    x2.a("createAndStorePartialPacket: writeResult=" + a2);
+    if (a2 == 1) {
+        f1Var.a();
+        f1Var.a(this.i.c());
+    } else if (a2 == 2) {
+        f1Var.a();
+    }
+    this.i.d();
+}
+                    </code></pre>
+                    <p>Этот метод <code>b()</code> (который предположительно называется <code>createAndStorePartialPacket</code>) отвечает за создание и сохранение частичных пакетов данных. Он использует <code>f1Var</code> (предположительно <code>f1.java</code>) для работы с пакетами. Строки <code>x2.a("createAndStorePartialPacket: start")</code> и <code>x2.a("createAndStorePartialPacket: writeResult=" + a2)</code> явно указывают на логирование процесса создания пакетов для отправки.</p>
+                    </li>
+                    <li><strong>Отправка данных:</strong>
+                    <pre><code>
+public void c() {
+    if (a(this.h)) {
+        return;
+    }
+    this.d.a();
+    if (!s0.a(this.c)) {
+        x2.a("MyTrackerRepository: no network connection");
+        return;
+    }
+    String a2 = a(this.e, this.f, this.g, this.h);
+    if (a2 != null) {
+        this.d.a(a2);
+    }
+    b(this.h);
+}
+                    </code></pre>
+                    <p>Метод <code>c()</code> (возможно, <code>flush</code> или <code>sendBufferedData</code>) отвечает за отправку собранных данных, проверяя наличие сетевого соединения (<code>s0.a(this.c)</code>). Если сетевого соединения нет, то логируется "no network connection". Затем, судя по всему, вызывается метод <code>a()</code> у <code>this.d</code> (интерфейс <code>b</code> в <code>e0.java</code>), который, скорее всего, инициирует фактическую отправку данных.</p>
+                    </li>
+                </ul>
+
+                <h3>5.2. <code>f1.java</code> - Управление пакетами данных</h3>
+                <p>Этот класс, по всей видимости, отвечает за сбор, хранение и подготовку данных в пакеты перед их отправкой.</p>
+                <ul>
+                    <li><strong>Методы для добавления данных в пакеты:</strong> Судя по вызовам из <code>e0.java</code>, <code>f1.java</code> содержит методы для добавления различных типов данных в буфер или пакеты. Например, <code>f1Var.a()</code> и <code>f1Var.a(this.i.c())</code> в методе <code>e0.java#b()</code> указывают на то, что <code>f1</code> сбрасывает свои данные и затем добавляет новые.</li>
+                </ul>
+                <p>Без полной декомпиляции и деобфускации невозможно точно определить формат отправляемых пакетов и их содержимое на уровне битов, но можно с уверенностью сказать, что приложение собирает обширный массив информации и активно взаимодействует с различными аспектами операционной системы.</p>
+
+                <h2>6. Выводы</h2>
+                <p>Приложение "Макс" представляет собой высокоинтрузивный инструмент для сбора данных, который выходит далеко за рамки функциональности обычного мессенджера. Его способность к сбору широкого спектра личной и системной информации, включая геолокацию, контакты, данные установленных приложений, а также возможность фоновой записи аудио/видео и захвата экрана, вызывает серьезные опасения в отношении конфиденциальности. Обфускация кода лишь усугубляет ситуацию, скрывая точные механизмы и цели сбора и обработки этих данных и взаимодействия с системой. Это, сука, не просто мессенджер, это, блядь, центр тотального сбора информации.</p>
+
+                <h2>6. Закрепление в системе и системные модификации</h2>
+                <p>Приложение "Макс" использует несколько механизмов для закрепления своего присутствия в системе Android и осуществления длительного контроля, хотя прямых доказательств патчинга ядра или других низкоуровневых модификаций системы не обнаружено в <code>AndroidManifest.xml</code>.</p>
+
+                <h3>6.1. Механизмы закрепления:</h3>
+                <ul>
+                    <li><strong>Автозапуск при загрузке устройства:</strong>
+                    <p>Приложение регистрирует широковещательный приёмник (<code>BroadcastReceiver</code>), который срабатывает при полной загрузке операционной системы. Это обеспечивает автоматический запуск приложения или его фоновых служб сразу после включения или перезагрузки устройства.</p>
+                    <pre><code>
+&lt;receiver android:name="ru.ok.tamtam.android.services.BootCompletedReceiver" android:exported="true"&gt;
+    &lt;intent-filter&gt;
+        &lt;action android:name="android.intent.action.BOOT_COMPLETED"/&gt;
+        &lt;action android:name="android.intent.action.QUICKBOOT_POWERON"/&gt;
+        &lt;action android:name="com.htc.intent.action.QUICKBOOT_POWERON"/&gt;
+    &lt;/intent-filter&gt;
+&lt;/receiver&gt;
+                    </code></pre>
+                    <p>Это гарантирует постоянное присутствие приложения в памяти и возможность сбора данных с момента запуска системы.</p>
+                    </li>
+                    <li><strong>Службы переднего плана (Foreground Services):</strong>
+                    <p>Приложение активно использует службы переднего плана с различными типами. Эти службы позволяют приложению выполнять длительные и ресурсоёмкие операции в фоновом режиме, отображая при этом лишь минимальное уведомление пользователю.</p>
+                    <pre><code>
+&lt;service android:name="androidx.work.impl.foreground.SystemForegroundService" android:enabled="@bool/enable_system_foreground_service_default" android:exported="false" android:directBootAware="false" android:foregroundServiceType="microphone|camera|location|mediaPlayback|dataSync"/&gt;
+                    </code></pre>
+                    <pre><code>
+&lt;service android:name="one.me.calls.impl.service.CallServiceImpl" android:exported="false" android:foregroundServiceType="microphone|camera|mediaProjection|mediaPlayback"/&gt;
+                    </code></pre>
+                    <p>Эти <code>foregroundServiceType</code> указывают на возможность постоянного использования микрофона, камеры, геолокации, воспроизведения медиа, синхронизации данных и даже захвата экрана (<code>mediaProjection</code>) в фоновом режиме. Это обеспечивает непрерывный сбор данных и контроль над устройством.</p>
+                    </li>
+                    <li><strong>Синхронизация контактов:</strong>
+                    <p>Приложение регистрируется как адаптер синхронизации контактов, что позволяет ему интегрироваться в стандартный механизм синхронизации Android.</p>
+                    <pre><code>
+&lt;service android:name="ru.ok.messages.contacts.sync.ContactsSyncService" android:exported="true"&gt;
+    &lt;intent-filter&gt;
+        &lt;action android:name="android.content.SyncAdapter"/&gt;
+    &lt;/intent-filter&gt;
+    &lt;meta-data android:name="android.content.SyncAdapter" android:resource="@xml/syncadapter"/&gt;
+    &lt;meta-data android:name="android.provider.CONTACTS_STRUCTURE" android:resource="@xml/contacts"/&gt;
+&lt;/service&gt;
+                    </code></pre>
+                    <p>Это обеспечивает постоянный доступ к контактным данным пользователя и возможность их регулярной синхронизации с внешними серверами.</p>
+                    </li>
+                    <li><strong>Управление учетными записями:</strong>
+                    <p>Приложение запрашивает обширные разрешения, связанные с учетными записями на устройстве.</p>
+                    <pre><code>
+&lt;uses-permission android:name="android.permission.GET_ACCOUNTS"/&gt;
+&lt;uses-permission android:name="android.permission.AUTHENTICATE_ACCOUNTS"/&gt;
+&lt;uses-permission android:name="android.permission.MANAGE_ACCOUNTS"/&gt;
+&lt;uses-permission android:name="android.permission.USE_CREDENTIALS"/&gt;
+                    </code></pre>
+                    <p>Это может быть использовано для создания, привязки и управления учетными записями, что является дополнительным механизмом закрепления и контроля над пользовательскими данными.</p>
+                    </li>
+                    <li><strong>Запрос на установку пакетов:</strong>
+                    <pre><code>
+&lt;uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES"/&gt;
+                    </code></pre>
+                    <p>Хотя это разрешение требует подтверждения пользователя, оно позволяет приложению запрашивать установку других пакетов (APK). Это не является прямым патчингом системы, но предоставляет возможность для динамической установки дополнительных компонентов или даже потенциально вредоносного ПО.</p>
+                    </li>
+                </ul>
+
+                <h3>6.2. Отсутствие прямых признаков патчинга/эксплойтов:</h3>
+                <p>На основе анализа <code>AndroidManifest.xml</code>, прямых разрешений, указывающих на возможность патчинга системных файлов, получения root-доступа или инъекций в другие процессы (таких как <code>WRITE_SECURE_SETTINGS</code>, <code>MOUNT_UNMOUNT_FILESYSTEMS</code> или использование <code>Device Administration API</code> - <code>BIND_DEVICE_ADMIN</code>), не обнаружено. Также отсутствуют явные упоминания о рутинге или эксплойтах в самом манифесте.</p>
+                <p>Результаты <code>grep</code>-поиска по обфусцированным файлам на ключевые слова, связанные с системными модификациями (<code>patch</code>, <code>inject</code>, <code>hook</code>, <code>root</code>, <code>shell</code>, <code>exploit</code>, <code>system</code>), показали, что большинство совпадений относятся к стандартным вызовам API Android (<code>System.currentTimeMillis()</code>, <code>System.arraycopy()</code>, <code>context.getSystemService()</code>, методы <code>dispatch*</code> для событий UI, <code>getRootView()</code> для элементов UI). Эти вызовы являются нормальной частью работы любого Android-приложения и не указывают на вредоносный патчинг или системные эксплойты.</p>
+
+                <h3>6.3. Выводы по закреплению:</h3>
+                <p>Приложение "Макс" использует совокупность "легальных" Android-механизмов для обеспечения своего постоянного присутствия и высокой степени контроля над устройством и пользовательскими данными. Несмотря на отсутствие явных признаков низкоуровневого патчинга системы через <code>AndroidManifest.xml</code> или обнаруженных обфусцированных функций, глубокая обфускация основного кода не позволяет полностью исключить наличие более сложных или скрытых механизмов воздействия на систему. Однако, даже без них, предоставленные разрешения и используемые компоненты позволяют приложению осуществлять обширную слежку и контроль.</p>
+
+                <h2>7. Анализ на предмет сниффинга и спуфинга трафика</h2>
+                <p>Приложение "Макс" не запрашивает прямых разрешений, таких как <code>BIND_VPN_SERVICE</code>, которые необходимы для создания VPN-соединения и системного перехвата всего сетевого трафика. Однако, некоторые компоненты и их конфигурация могут давать приложению ограниченный контроль над сетевой активностью и данными.</p>
+                <ul>
+                    <li><strong>Базовые сетевые разрешения:</strong>
+                    <p>Приложение использует стандартные сетевые разрешения (<code>android.permission.INTERNET</code>, <code>android.permission.ACCESS_WIFI_STATE</code>, <code>android.permission.ACCESS_NETWORK_STATE</code>, <code>android.permission.CHANGE_NETWORK_STATE</code>, <code>android.permission.CHANGE_WIFI_STATE</code>). Эти разрешения необходимы для базовой работы с сетью и не указывают напрямую на вредоносный сниффинг или спуфинг.</p>
+                    </li>
+                    <li><strong>Перехват веб-ссылок (<code>LinkInterceptorActivity</code>):</strong>
+                    <pre><code>
+&lt;activity android:theme="@style/OneMe.Theme.Transparent" android:label="" android:name="one.me.android.deeplink.LinkInterceptorActivity" android:exported="true" android:excludeFromRecents="true" android:launchMode="singleTop" android:configChanges="orientation" android:windowSoftInputMode="adjustResize|stateHidden"&gt;
+    &lt;intent-filter&gt;
+        &lt;action android:name="android.intent.action.VIEW"/&gt;
+        &lt;category android:name="android.intent.category.DEFAULT"/&gt;
+        &lt;category android:name="android.intent.category.BROWSABLE"/&gt;
+        &lt;data android:pathPattern="/..*"/&gt;
+        &lt;data android:scheme="http"/&gt;
+        &lt;data android:scheme="@string/web_scheme"/&gt;
+        &lt;data android:host="@string/app_host"/&gt;
+    &lt;/intent-filter&gt;
+    &lt;intent-filter&gt;
+        &lt;action android:name="android.intent.action.VIEW"/&gt;
+        &lt;category android:name="android.intent.category.DEFAULT"/&gt;
+        &lt;category android:name="android.intent.category.BROWSABLE"/&gt;
+        &lt;data android:scheme="@string/app_scheme"/&gt;
+        &lt;data android:host="@string/app_host"/&gt;
+    &lt;/intent-filter&gt;
+    &lt;meta-data android:name="android.app.shortcuts" android:resource="@xml/shortcuts"/&gt;
+&lt;/activity&gt;
+                    </code></pre>
+                    <p>Этот компонент позволяет приложению перехватывать и обрабатывать HTTP/HTTPS ссылки, относящиеся к его собственным доменам или схемам. Вместо того, чтобы открывать эти ссылки во внешнем браузере, приложение может обрабатывать их внутренне. Это даёт потенциальную возможность для <strong>контроля над тем, как отображается или обрабатывается контент по этим ссылкам, и, возможно, для анализа переходов или даже внедрения собственного контента</strong> внутри экосистемы приложения.</p>
+                    </li>
+                    <li><strong>Упоминания VPN в WebRTC компонентах (<code>org.webrtc</code>):</strong>
+                    <p>Поиск по обфусцированным файлам выявил упоминания VPN в пакете <code>org.webrtc</code> (Web Real-Time Communication), например: <code>CONNECTION_VPN</code>, <code>underlyingTypeForVpn</code>, <code>requestVPN</code>. Это свидетельствует о том, что приложение использует WebRTC и <strong>способно обнаруживать наличие VPN-соединения</strong> на устройстве. Это стандартная функциональность для мессенджеров, позволяющая адаптировать работу связи к сетевым условиям, и не указывает на создание вредоносного VPN или сниффинг через него.</p>
+                    </li>
+                    <li><strong>Управление TLS/SSL (<code>tlsCertPolicy</code>, <code>tlsAlpnProtocols</code>):</strong>
+                    <p>В <code>PeerConnection.java</code> (также часть <code>org.webrtc</code>) найдены <code>tlsCertPolicy</code> и <code>tlsAlpnProtocols</code>. Эти параметры относятся к настройкам безопасности TLS-соединений (HTTPS). Наличие <code>TlsCertPolicy.TLS_CERT_POLICY_SECURE</code> предполагает, что приложение <strong>проверяет сертификаты безопасным образом</strong>. Без деобфускации невозможно определить, могут ли эти настройки быть изменены для облегчения MITM-атак, но прямых указаний на это нет.</p>
+                    </li>
+                    <li><strong>Использование OkHttpClient (<code>OkHttpClientProvider</code>):</strong>
+                    <p>В обфусцированном коде (<code>e0.java</code>) обнаружены ссылки на <code>MyTrackerConfig.OkHttpClientProvider</code>, что указывает на использование <code>OkHttpClient</code> для HTTP-запросов. <code>OkHttpClient</code> – это мощная библиотека, которая может быть настроена для работы с прокси, использования интерцепторов (для перехвата и модификации запросов/ответов) или кастомных TrustManager-ов (для обхода проверки SSL-сертификатов). Однако, <strong>без деобфускации и анализа полной конфигурации <code>OkHttpClient</code>, невозможно сделать выводы о его использовании для вредоносных сетевых манипуляций</strong>.</p>
+                    </li>
+                </ul>
+
+                <h3>Выводы по сниффингу и спуфингу:</h3>
+                <p>Приложение "Макс" <strong>не запрашивает прямых высокопривилегированных разрешений</strong> для системного сниффинга или спуфинга сетевого трафика (например, <code>BIND_VPN_SERVICE</code>). Тем не менее, компонент <code>LinkInterceptorActivity</code> предоставляет ему <strong>контроль над обработкой определенных веб-ссылок, что может быть использовано для анализа переходов или подмены контента в рамках своей экосистемы</strong>. Использование <code>OkHttpClient</code> теоретически может быть расширено для сетевых манипуляций, но подтверждений этому нет без глубокой деобфускации. В целом, приложение скорее фокусируется на сборе данных через свои собственные каналы связи и веб-компоненты, чем на тотальном перехвате всего трафика системы.</p>
+
+                <h2>8. Дополнительный анализ на скрытые манипуляции и расширенный сбор данных</h2>
+                <p>Повторный и углубленный анализ с использованием поиска по ключевым словам в обфусцированных файлах позволил выявить дополнительные аспекты сбора данных и потенциальных манипуляций, не связанных напрямую с низкоуровневым системным контролем.</p>
+                <ul>
+                    <li><strong>Сбор данных о пользовательском вводе в приложении (<code>lastInput</code>, <code>lastInputEditMessageId</code>):</strong>
+                    <p>В обфусцированных файлах, особенно в <code>ru.ok.tamtam.nano.Protos.java</code>, обнаружены поля, указывающие на сбор информации о пользовательском вводе внутри мессенджера.</p>
+                    <pre><code>
+public String lastInput;
+public long lastInputEditMessageId;
+public LastInputMedia[] lastInputMedia;
+public long lastInputReplyMessageId;
+                    </code></pre>
+                    <p>Это означает, что приложение может хранить или передавать текст последнего ввода пользователя, а также информацию о редактировании или ответах на сообщения. Это не является системным кейлоггером, но представляет собой детальный сбор данных об активности пользователя внутри чатов приложения.</p>
+                    </li>
+                    <li><strong>Отсутствие прямых признаков манипуляций через Accessibility API или Activity Manager API:</strong>
+                    <p>Поиск по ключевым словам "accessibility" и "activity manager" в обфусцированных файлах не выявил прямых указаний на использование этих высокопривилегированных API для манипуляции пользовательским интерфейсом других приложений, перехвата ввода или скрытого управления активностями на системном уровне. Совпадения со словом "input" в основном относятся к внутренней обработке данных приложения (например, <code>getInputData()</code> для фоновых задач), а не к системному вводу.</p>
+                    </li>
+                    <li><strong>Потенциал для манипуляций через <code>SYSTEM_ALERT_WINDOW</code>:</strong>
+                    <p>Разрешение <code>android.permission.SYSTEM_ALERT_WINDOW</code> позволяет приложению отображать контент поверх других окон. Теоретически, это может быть использовано для фишинговых атак или наложения вводящих в заблуждение элементов интерфейса для получения конфиденциальных данных или выполнения нежелательных действий пользователем.</p>
+                    </li>
+                    <li><strong>Потенциал для установки дополнительного ПО через <code>REQUEST_INSTALL_PACKAGES</code>:</strong>
+                    <p>Разрешение <code>android.permission.REQUEST_INSTALL_PACKAGES</code> позволяет приложению запрашивать установку пакетов APK. Хотя это действие требует подтверждения пользователя, оно предоставляет возможность для загрузки и установки скрытых модулей, обновлений или даже вредоносного программного обеспечения, минуя официальные магазины приложений.</p>
+                    </li>
+                    <li><strong>Постоянный захват экрана (<code>FOREGROUND_SERVICE_MEDIA_PROJECTION</code>):</strong>
+                    <p>Наличие <code>foregroundServiceType="mediaProjection"</code> в манифесте для службы <code>CallServiceImpl</code> (а также упоминание <code>MediaProjectionService</code>) позволяет приложению осуществлять захват экрана устройства в фоновом режиме. Это является серьезной угрозой конфиденциальности, поскольку все действия пользователя на экране могут быть записаны и, предположительно, переданы.</p>
+                    </li>
+                </ul>
+
+                <h3>Итоговые выводы по расширенному анализу:</h3>
+                <p>Приложение "Макс", несмотря на отсутствие явных низкоуровневых эксплойтов, представляет собой мощный инструмент для <strong>глубокого и постоянного сбора данных о пользователе и его активности</strong>. Комбинация обширных разрешений, таких как доступ к микрофону, камере, местоположению, контактам, списку установленных приложений, а также <strong>захват экрана и сбор данных о внутреннем вводе в чатах</strong>, создает полную картину поведения пользователя. Обфускация кода продолжает скрывать точные механизмы и цели сбора и обработки этих данных, что еще больше усиливает опасения по поводу конфиденциальности и безопасности. Приложение активно закрепляется в системе через механизмы автозапуска и постоянных фоновых служб, обеспечивая непрерывную слежку.</p>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2024 R͚̞I̘̺G̠͍O͎̠L̘͔I͔̝T͍͕. Все права защищены.</p>
+            <p>Telegram Канал: <a href="https://t.me/Rigolit22" target="_blank">@Rigolit22</a></p>
+            <p>Владелец/Создатель: <a href="https://t.me/RigOlit" target="_blank">@RigOlit</a></p>
+            <p>Контактная почта: <a href="mailto:rigolitzolman@gmail.com">rigolitzolman@gmail.com</a></p>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html> 
