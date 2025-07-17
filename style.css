@@ -361,14 +361,15 @@ footer::before {
     border-radius: 0 0 2px 2px;
 }
 
+/* Общие стили для ссылок в футере, чтобы они были видны на темном фоне */
 footer a {
-    color: #E0FFFF;
+    color: #E0FFFF; /* Очень светлый голубоватый для видимости */
     text-decoration: none;
     transition: color 0.3s ease;
 }
 
 footer a:hover {
-    color: #B22222;
+    color: #FF0000; /* Красный при наведении */
 }
 
 .article-content, .article-list, .about-section {
@@ -531,6 +532,70 @@ footer a:hover {
     font-size: 1.5em;
 }
 
+/* Стили для баннера */
+#floating-banner {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    width: 250px; /* Уменьшаем ширину */
+    background-color: #222;
+    color: white;
+    padding: 15px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+    font-family: 'Arial', sans-serif;
+    border: 1px solid #b22222; /* Меняем цвет рамки на красный */
+}
+
+#floating-banner h3 {
+    color: #b22222;
+    margin-top: 15px; /* Добавляем отступ сверху */
+    font-size: 1.1em; /* Чуть уменьшаем шрифт */
+    text-align: center;
+}
+
+#floating-banner p {
+    font-size: 0.85em; /* Чуть уменьшаем шрифт */
+    line-height: 1.4;
+    margin-bottom: 10px;
+}
+
+#floating-banner .banner-button {
+    display: block;
+    width: 100%;
+    padding: 10px 15px;
+    background-color: #b22222; /* Меняем цвет кнопки на красный */
+    color: white;
+    text-align: center;
+    border-radius: 5px;
+    text-decoration: none;
+    font-weight: bold;
+    margin-top: 15px;
+    transition: background-color 0.3s ease;
+    box-sizing: border-box; /* Добавляем это свойство */
+}
+
+#floating-banner .banner-button:hover {
+    background-color: #a01c1c; /* Темнее красный при наведении */
+}
+
+#floating-banner .close-banner {
+    position: absolute;
+    top: 5px; /* Возвращаем наверх */
+    right: 10px; /* Возвращаем направо */
+    background: none;
+    border: none;
+    color: white;
+    font-size: 1.2em;
+    cursor: pointer;
+    padding: 5px;
+}
+
+#floating-banner .close-banner:hover {
+    color: #FF00FF;
+}
+
 @media (max-width: 768px) {
     header {
         height: auto;
@@ -569,67 +634,4 @@ footer a:hover {
 .reveal.active {
     opacity: 1;
     transform: translateY(0);
-}
-
-#floating-banner {
-    position: fixed;
-    bottom: 20px;
-    right: 20px;
-    width: 250px; 
-    background-color: #222;
-    color: white;
-    padding: 15px;
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
-    z-index: 1000;
-    font-family: 'Arial', sans-serif;
-    border: 1px solid #b22222; 
-}
-
-#floating-banner h3 {
-    color: #b22222; 
-    margin-top: 15px; 
-    font-size: 1.1em; 
-    text-align: center;
-}
-
-#floating-banner p {
-    font-size: 0.85em; 
-    line-height: 1.4;
-    margin-bottom: 10px;
-}
-
-#floating-banner .banner-button {
-    display: block;
-    width: 100%;
-    padding: 10px 15px;
-    background-color: #b22222; 
-    color: white;
-    text-align: center;
-    border-radius: 5px;
-    text-decoration: none;
-    font-weight: bold;
-    margin-top: 15px;
-    transition: background-color 0.3s ease;
-    box-sizing: border-box;
-}
-
-#floating-banner .banner-button:hover {
-    background-color: #a01c1c; 
-}
-
-#floating-banner .close-banner {
-    position: absolute;
-    top: 5px; 
-    right: 10px; 
-    background: none;
-    border: none;
-    color: white;
-    font-size: 1.2em;
-    cursor: pointer;
-    padding: 5px;
-}
-
-#floating-banner .close-banner:hover {
-    color: #FF00FF;
 }
